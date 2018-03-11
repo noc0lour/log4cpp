@@ -41,9 +41,9 @@ build_script:
    - ps: ls ./
 
 artifacts:
-  - path: 'C:\projects\log4cpp\build\*.exe'
+  - path: 'build\*.exe'
     name: "Binary installer"
-  - path: 'C:\projects\log4cpp\build\*.zip'
+  - path: 'build\*.zip'
     name: "Zipped binaries"
 
 deploy:
