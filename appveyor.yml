@@ -1,0 +1,58 @@
+version: 1.0.{build}
+
+
+configuration: Release
+platform: x64
+
+environment:
+  matrix:
+    - GENERATOR: "Visual Studio 14 2015"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      VISUAL_STUDIO_VERSION: "14.0"
+
+init:
+  - ps: |
+      If ($env:Platform -Match "x86") {
+        $env:ARCHITECTURE="32"
+      } Else {
+        $env:ARCHITECTURE="64"
+        $env:GENERATOR_SUFFIX=" Win64"
+      }
+      $env:GENERATOR="$($env:GENERATOR)$($env:GENERATOR_SUFFIX)"
+
+
+
+before_build:
+  - ps: |
+      mkdir build
+      cd build
+      cmake --version
+  - cmd: cmake .. -G "%GENERATOR%"
+  - ps: ls ./
+
+# build:
+#   parallel: true
+#   verbosity: minimal
+#   project: C:\projects\log4cpp\build\LOG4CPP.sln
+
+build_script:
+   - msbuild ALL_BUILD.vcxproj /m /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+   - msbuild PACKAGE.vcxproj /m /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+   - ps: ls ./
+
+artifacts:
+  - path: '*.exe'
+    name: "Binary installer"
+  - path: '*.zip'
+    name: "Zipped binaries"
+
+deploy:
+  description: "Appveyor Auto-Build"
+  provider: GitHub
+  auth_token:
+    secure: GGOwdgv+3rDk31eFOE5PFHlGwSj0KTKlLsfT4Or6p4hDY9gRwQ/IzbYXqUiUDDic
+  draft: false
+  prerelease: false
+  on:
+    branch: master
+    appveyor_repo_tag: true
