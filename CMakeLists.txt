@@ -9,6 +9,8 @@
 # (4) To install either "make install" or "make install DESTDIR=<your directory>"
 # (5) Need to include changes in include/log4cpp/Portability.hh for OSX to build
 
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0 )
+
 PROJECT ( LOG4CPP )
 
 INCLUDE_DIRECTORIES ( include )
